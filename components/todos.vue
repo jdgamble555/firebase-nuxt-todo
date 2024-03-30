@@ -6,10 +6,10 @@ const todos = useTodos()
 
 <template>
     <template v-if="todos.data.length">
-        <div class="grid grid-cols-[auto,auto,auto,auto] gap-3 justify-items-start">
-            <template v-for="todo in todos.data" :key="todo.id">
-                <TodoItem :todo="todo" />
-            </template>
+        <div class="grid grid-cols-[auto,auto,auto,auto] gap-3 justify-items-start" 
+            v-for="todo in todos.data"
+            :key="todo.id">
+            <TodoItem :todo="todo" />
         </div>
     </template>
     <p class="font-bold" v-else>
