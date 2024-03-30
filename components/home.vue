@@ -14,10 +14,8 @@ const user = useUser()
             <hr />
             <Todos />
         </template>
-        <template v-else>
-            <button class="bg-red-600 text-white font-semibold p-2" @click="loginWithGoogle">
-                Signin with Google
-            </button>
-        </template>
+        <button class="bg-red-600 text-white font-semibold p-2" @click="loginWithGoogle" v-else>
+            Signin with Google
+        </button>
     </section>
 </template>

@@ -12,8 +12,8 @@ const todos = useTodos()
             </template>
         </div>
     </template>
-    <template v-else>
-        <p><b>Add your first todo item!</b></p>
-    </template>
+    <p class="font-bold" v-else>
+        Add your first todo item!
+    </p>
     <TodoForm />
 </template>
