@@ -26,7 +26,7 @@ export const useUser = () => {
         return user
     }
 
-    let unsubscribe: Unsubscribe
+    let unsubscribe: Unsubscribe = () => {}
 
     onMounted(() => {
         initialLoad.value = false
@@ -40,7 +40,7 @@ export const useUser = () => {
         })
     })
 
-    onUnmounted(() => unsubscribe())
+    onUnmounted(unsubscribe)
 
     return user
 }
