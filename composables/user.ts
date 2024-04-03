@@ -40,7 +40,7 @@ export const useUser = () => {
         })
     })
 
-    onUnmounted(unsubscribe!)
+    onUnmounted(() => unsubscribe())
 
     return user
 }
