@@ -11,7 +11,8 @@ import {
     doc,
     serverTimestamp,
     updateDoc,
-    deleteDoc
+    deleteDoc,
+    Timestamp
 } from "firebase/firestore"
 
 export interface TodoItem {
@@ -31,10 +32,13 @@ export const snapToData = (
         return []
     }
     return q.docs.map((doc) => {
-        const data = doc.data()
+        const data = doc.data({
+            serverTimestamps: 'estimate'
+        })
+        const created = data.created as Timestamp;
         return {
             ...data,
-            created: new Date(data['created']?.toMillis()),
+            created: created.toDate(),
             id: doc.id
         }
     }) as TodoItem[]
