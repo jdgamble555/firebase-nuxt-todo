@@ -12,7 +12,7 @@ import {
     serverTimestamp,
     updateDoc,
     deleteDoc,
-    Timestamp
+    Timestamp,
 } from "firebase/firestore"
 
 export interface TodoItem {
@@ -60,48 +60,46 @@ export const useTodos = () => {
         loading: true
     })
 
-    watchEffect((onCleanup) => {
+    const userData = user.value
 
-        const userData = user.value
+    if (!userData) {
+        todos.value.loading = false
+        todos.value.data = []
+        return todos
+    }
 
-        if (!userData) {
+    // will always get called when mounted
+    const unsubscribe = onSnapshot(
+
+        // query realtime todo list
+        query(
+            collection($db, 'todos') as CollectionReference<TodoItem[]>,
+            where('uid', '==', userData.uid),
+            orderBy('created')
+        ), (q) => {
+
+            // toggle loading
             todos.value.loading = false
-            todos.value.data = []
-            return
-        }
 
-        const unsubscribe = onSnapshot(
+            // get data, map to todo type
+            const data = snapToData(q)
 
-            // query realtime todo list
-            query(
-                collection($db, 'todos') as CollectionReference<TodoItem[]>,
-                where('uid', '==', userData.uid),
-                orderBy('created')
-            ), (q) => {
+            /**
+             * Note: Will get triggered 2x on add 
+             * 1 - for optimistic update
+             * 2 - update real date from server date
+            */
 
-                // toggle loading
-                todos.value.loading = false
+            // print data in dev mode
+            if (runtimeConfig.public.dev) {
+                console.log(data)
+            }
 
-                // get data, map to todo type
-                const data = snapToData(q)
+            // add to store
+            todos.value.data = data
+        })
 
-                /**
-                 * Note: Will get triggered 2x on add 
-                 * 1 - for optimistic update
-                 * 2 - update real date from server date
-                */
-
-                // print data in dev mode
-                if (runtimeConfig.public.dev) {
-                    console.log(data)
-                }
-
-                // add to store
-                todos.value.data = data
-            })
-
-        onCleanup(unsubscribe)
-    })
+    onUnmounted(unsubscribe)
 
     return todos
 }
