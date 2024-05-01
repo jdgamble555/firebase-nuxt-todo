@@ -6,7 +6,6 @@ import {
     collection,
     where,
     orderBy,
-    CollectionReference,
     setDoc,
     doc,
     serverTimestamp,
@@ -19,7 +18,7 @@ export interface TodoItem {
     id: string
     text: string
     complete: boolean
-    created: Date
+    createdAt: Date
     uid: string
 }
 
@@ -35,10 +34,10 @@ export const snapToData = (
         const data = doc.data({
             serverTimestamps: 'estimate'
         })
-        const created = data.created as Timestamp;
+        const createdAt = data['createdAt'] as Timestamp;
         return {
             ...data,
-            created: created.toDate(),
+            createdAt: createdAt.toDate(),
             id: doc.id
         }
     }) as TodoItem[]
@@ -68,38 +67,40 @@ export const useTodos = () => {
         return todos
     }
 
-    // will always get called when mounted
-    const unsubscribe = onSnapshot(
+    watchEffect((onCleanup) => {
 
-        // query realtime todo list
-        query(
-            collection($db, 'todos') as CollectionReference<TodoItem[]>,
-            where('uid', '==', userData.uid),
-            orderBy('created')
-        ), (q) => {
+        const unsubscribe = onSnapshot(
 
-            // toggle loading
-            todos.value.loading = false
+            // query realtime todo list
+            query(
+                collection($db, 'todos'),
+                where('uid', '==', userData.uid),
+                orderBy('createdAt')
+            ), (q) => {
 
-            // get data, map to todo type
-            const data = snapToData(q)
+                // toggle loading
+                todos.value.loading = false
 
-            /**
-             * Note: Will get triggered 2x on add 
-             * 1 - for optimistic update
-             * 2 - update real date from server date
-            */
+                // get data, map to todo type
+                const data = snapToData(q)
 
-            // print data in dev mode
-            if (runtimeConfig.public.dev) {
-                console.log(data)
-            }
+                /**
+                 * Note: Will get triggered 2x on add 
+                 * 1 - for optimistic update
+                 * 2 - update real date from server date
+                */
 
-            // add to store
-            todos.value.data = data
-        })
+                // print data in dev mode
+                if (runtimeConfig.public.dev) {
+                    console.log(data)
+                }
 
-    onUnmounted(unsubscribe)
+                // add to store
+                todos.value.data = data
+            })
+
+        onCleanup(unsubscribe)
+    })
 
     return todos
 }
@@ -126,7 +127,7 @@ export const addTodo = async (e: Event) => {
         uid,
         text: task,
         complete: false,
-        created: serverTimestamp()
+        createdAt: serverTimestamp()
     })
 }
 
