@@ -99,7 +99,6 @@ export const useTodos = () => {
                 todos.value = { loading: false, data, error: null }
             },
             (error) => {
-
                 todos.value = { loading: false, data: [], error }
             }
         )
