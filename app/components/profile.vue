@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const user = useUser()
+const user = getUser()
 
 </script>
 

@@ -54,7 +54,7 @@ const todoConverter: FirestoreDataConverter<TodoDoc> = {
 export const useTodos = () => {
 
     const { $db } = useNuxtApp()
-    const user = useUser()
+    const user = getUser()
 
     const todos = ref<{
         data: TodoDoc[]

@@ -4,7 +4,8 @@ const actionError = ref<string | null>(null)
 
 const runAction = async (action: () => Promise<{ error: string | null }>) => {
     actionError.value = null
-    actionError.value = (await action()).error
+    const result = await action()
+    actionError.value = result.error
 }
 </script>
 

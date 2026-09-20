@@ -1,16 +1,18 @@
 <script setup lang="ts">
 
-const user = useUser()
+const user = setUser()
 const actionError = ref<string | null>(null)
 
 const onLogin = async () => {
     actionError.value = null
-    actionError.value = (await loginWithGoogle()).error
+    const result = await loginWithGoogle()
+    actionError.value = result.error
 }
 
 const onLogout = async () => {
     actionError.value = null
-    actionError.value = (await logout()).error
+    const result = await logout()
+    actionError.value = result.error
 }
 
 </script>

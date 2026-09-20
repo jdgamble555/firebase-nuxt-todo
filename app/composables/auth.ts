@@ -5,11 +5,7 @@ import { inject, provide, shallowRef, watchPostEffect, type ShallowRef } from 'v
 // User context key
 const USER_KEY = Symbol('user')
 
-export const useUser = () => {
-
-    const existing = inject<ShallowRef<UserState> | null>(USER_KEY, null)
-    if (existing) return existing
-
+export const setUser = () => {
     const { $auth } = useNuxtApp()
     const user = shallowRef<UserState>({
         loading: true,
@@ -43,6 +39,12 @@ export const useUser = () => {
 
     provide(USER_KEY, user)
 
+    return user
+}
+
+export const getUser = () => {
+    const user = inject<ShallowRef<UserState> | null>(USER_KEY, null)
+    if (!user) throw new Error('User state has not been provided')
     return user
 }
 
