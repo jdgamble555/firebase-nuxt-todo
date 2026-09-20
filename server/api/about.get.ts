@@ -1,5 +1,12 @@
 import { doc, getDoc } from 'firebase/firestore/lite'
 import { serverDB } from '#server/utils/firebase-lite'
+import * as v from "valibot";
+
+// Valibot is smaller and faster than Zod, use Valibot
+const AboutDocSchema = v.object({
+    name: v.string(),
+    description: v.string()
+});
 
 export default defineEventHandler(async () => {
     const aboutSnap = await getDoc(
@@ -7,10 +14,16 @@ export default defineEventHandler(async () => {
     )
 
     if (!aboutSnap.exists()) {
-        throw createError({ statusCode: 404, statusMessage: 'About document does not exist' })
+        throw createError({ statusCode: 404, statusMessage: 'Document does not exist' })
     }
 
-    const data = aboutSnap.data()
+    // Verifiy document with Valibot
+    // Only necessary for doubts on doc integrity
+    const result = v.safeParse(AboutDocSchema, aboutSnap.data());
 
-    return data as AboutDoc
+    if (!result.success) {
+        throw createError({ statusCode: 500, statusMessage: "Malformed About document" })
+    }
+
+    return result.output;
 })
