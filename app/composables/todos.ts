@@ -14,12 +14,11 @@ import {
     type FirestoreDataConverter,
 } from 'firebase/firestore'
 import { ref, watchPostEffect } from 'vue'
+import { auth, db } from '../utils/firebase'
 
 // Only used to create example texts -- DO NOT USE IN PRODUCTION
 export const generateText = () => {
-    const { $db } = useNuxtApp()
-
-    return doc(collection($db, 'todos'))
+    return doc(collection(db, 'todos'))
         .id
         .substring(0, 10)
         .toLowerCase()
@@ -52,8 +51,6 @@ const todoConverter: FirestoreDataConverter<TodoDoc> = {
 }
 
 export const useTodos = () => {
-
-    const { $db } = useNuxtApp()
     const user = getUser()
 
     const todos = ref<{
@@ -85,7 +82,7 @@ export const useTodos = () => {
 
         const unsubscribe = onSnapshot(
             query(
-                collection($db, 'todos'),
+                collection(db, 'todos'),
                 where('uid', '==', currentUser.uid),
                 orderBy('createdAt')
             ).withConverter(todoConverter),
@@ -114,9 +111,7 @@ export const useTodos = () => {
 }
 
 export const addTodo = async (text: string) => {
-
-    const { $auth, $db } = useNuxtApp()
-    const user = $auth.currentUser
+    const user = auth.currentUser
 
     if (!user) {
         return { error: 'No user' }
@@ -124,7 +119,7 @@ export const addTodo = async (text: string) => {
 
     try {
         await setDoc(
-            doc(collection($db, 'todos')),
+            doc(collection(db, 'todos')),
             {
                 uid: user.uid,
                 text,
@@ -144,12 +139,9 @@ export const addTodo = async (text: string) => {
 }
 
 export const updateTodo = async (id: string, newStatus: boolean) => {
-
-    const { $db } = useNuxtApp()
-
     try {
         await updateDoc(
-            doc($db, 'todos', id),
+            doc(db, 'todos', id),
             {
                 complete: newStatus,
                 updatedAt: serverTimestamp()
@@ -167,12 +159,9 @@ export const updateTodo = async (id: string, newStatus: boolean) => {
 }
 
 export const deleteTodo = async (id: string) => {
-
-    const { $db } = useNuxtApp()
-
     try {
         await deleteDoc(
-            doc($db, 'todos', id)
+            doc(db, 'todos', id)
         )
 
         return { error: null }

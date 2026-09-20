@@ -1,12 +1,12 @@
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onIdTokenChanged, signInWithPopup, signOut } from 'firebase/auth'
 import { inject, provide, shallowRef, watchPostEffect, type ShallowRef } from 'vue'
+import { auth } from '../utils/firebase'
 
 // User context key
 const USER_KEY = Symbol('user')
 
 export const setUser = () => {
-    const { $auth } = useNuxtApp()
     const user = shallowRef<UserState>({
         loading: true,
         data: null,
@@ -15,7 +15,7 @@ export const setUser = () => {
 
     // Create user listener
     watchPostEffect((onCleanup) => {
-        const unsubscribe = onIdTokenChanged($auth, (currentUser) => {
+        const unsubscribe = onIdTokenChanged(auth, (currentUser) => {
 
             // not logged in
             if (!currentUser) {
@@ -49,11 +49,8 @@ export const getUser = () => {
 }
 
 export const loginWithGoogle = async () => {
-
-    const { $auth } = useNuxtApp()
-
     try {
-        await signInWithPopup($auth, new GoogleAuthProvider())
+        await signInWithPopup(auth, new GoogleAuthProvider())
         return { error: null }
     } catch (error) {
 
@@ -66,11 +63,8 @@ export const loginWithGoogle = async () => {
 }
 
 export const logout = async () => {
-
-    const { $auth } = useNuxtApp()
-
     try {
-        await signOut($auth)
+        await signOut(auth)
         return { error: null }
     } catch (error) {
 

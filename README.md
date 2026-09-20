@@ -20,6 +20,14 @@ yarn install
 bun install
 ```
 
+Set `VITE_FIREBASE_CONFIG` to your Firebase web app's JSON config. For example, in a local `.env` file:
+
+```dotenv
+VITE_FIREBASE_CONFIG='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'
+```
+
+The client reads this value at build time. The server also needs the same environment variable when the built app runs; Nuxt does not load `.env` for the built server.
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`:

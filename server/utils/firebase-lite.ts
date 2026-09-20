@@ -1,9 +1,10 @@
-import { getApp, getApps, initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp, type FirebaseOptions } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore/lite'
 
-const config = useRuntimeConfig()
+const firebaseConfig = JSON.parse(process.env.VITE_FIREBASE_CONFIG!) as FirebaseOptions
+
 const app = getApps().length
     ? getApp()
-    : initializeApp(config.public.FIREBASE_CONFIG)
+    : initializeApp(firebaseConfig)
 
 export const serverDB = getFirestore(app)

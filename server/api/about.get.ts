@@ -1,5 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore/lite'
-import { serverDB } from '#server/utils/firebase-lite'
+import { serverDB } from '../utils/firebase-lite';
 import * as v from "valibot";
 
 // Valibot is smaller and faster than Zod, use Valibot
