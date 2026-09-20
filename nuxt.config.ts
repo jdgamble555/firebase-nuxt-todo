@@ -10,8 +10,7 @@ export default defineNuxtConfig({
     public: {
       FIREBASE_CONFIG: JSON.parse(
         process.env.NUXT_PUBLIC_FIREBASE_CONFIG!
-      ),
-      dev: process.env.NODE_ENV !== 'production'
+      )
     }
   },
   css: ['~/assets/css/main.css'],
